@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
+import React, { useState, useEffect } from "react";
+import MainLayout from "./components/layout.jsx";
+import Product from "./components/Product.jsx";
+import productApi from "./api/productApi.js";
+import { Row, Col } from "antd";
+const App = () => {
+  const [products, setProducts] = useState([]);
+  useEffect(() => {
+    const fetchProductList = async () => {
+      try {
+        const params = { _page: 1, _limit: 12 };
+        const res = await productApi.getAll(params);
+        console.log("Fetch products successfully: ", res);
+        setProducts(res);
+      } catch (error) {
+        console.log("Failed to fetch product list: ", error);
+      }
+    };
+    fetchProductList();
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <MainLayout>
+      <Row gutter={[16, 16]}>
+        {products &&
+          products.map((item) => (
+            <Col xl={6} lg={8} md={12} xs={24}>
+              <Product key={item.objectID} product={item} />
+            </Col>
+          ))}
+      </Row>
+    </MainLayout>
   );
-}
-
+};
 export default App;
