@@ -2,11 +2,17 @@ import React from "react";
 import { Row, Col, Select } from "antd";
 const { Option } = Select;
 
-const HeaderPage = () => {
+const HeaderPage = ({ onChangeSortPrice, total }) => {
+  const loadTime =
+    window.performance.timing.domComplete -
+    window.performance.timing.domLoading;
   return (
     <Row justify="space-between" style={{ padding: "15px 0" }}>
       <Col span={6}>
-        <span>21,469 results found in 2ms</span>
+        <span>
+          {total} results found in {loadTime < 0 ? 0 : loadTime}
+          ms
+        </span>
       </Col>
       <Col span={6}>
         <div
@@ -17,13 +23,14 @@ const HeaderPage = () => {
           }}
         >
           <span>Sort by</span>
-          <Select defaultValue="lucy" style={{ width: 120 }}>
-            <Option value="jack">Jack</Option>
-            <Option value="lucy">Lucy</Option>
-            <Option value="disabled" disabled>
-              Disabled
-            </Option>
-            <Option value="Yiminghe">yiminghe</Option>
+          <Select
+            defaultValue="Featured"
+            style={{ width: 120 }}
+            onChange={(value) => onChangeSortPrice(value)}
+          >
+            <Option value="featured">Featured</Option>
+            <Option value="asc">Price asc</Option>
+            <Option value="desc">Price desc</Option>
           </Select>
         </div>
       </Col>

@@ -1,56 +1,44 @@
 import React from "react";
 import { Collapse } from "antd";
 const { Panel } = Collapse;
-const text = `
-  A dog is a type of domesticated animal.
-  Known for its loyalty and faithfulness,
-  it can be found as a welcome guest in many households across the world.
-`;
 
-const SideBar = () => {
-  return (
+const b = ["tu lanh", "toshiba"];
+const c = ["tu lanh", "samsung"];
+
+const categories = [
+  {
+    "Tủ lạnh": [
+      {
+        "To lam": [
+          {
+            "Tủ nóng": "Sieu to",
+          },
+        ],
+      },
+    ],
+  },
+];
+
+const isArray = (item) => Array.isArray(item || objectKeys(item));
+const objectKeys = (item) => item[Object.keys(item)];
+
+const mapMenu = (item) => {
+  return item.map((ite, i) => (
     <Collapse ghost>
-      <Panel header="This is panel " key="1">
-        <Collapse ghost>
-          <Panel header="This is panel hea" key="1">
-            <p>{text}</p>
-          </Panel>
-          <Panel header="This is pa" key="2">
-            <p>{text}</p>
-          </Panel>
-          <Panel header="This is pa" key="3">
-            <p>{text}</p>
-          </Panel>
-        </Collapse>
-      </Panel>
-      <Panel header="This is panel header 2" key="2">
-        <Collapse ghost>
-          <Panel header="This is panel header 1" key="1">
-            <p>{text}</p>
-          </Panel>
-          <Panel header="This is panel header 2" key="2">
-            <p>{text}</p>
-          </Panel>
-          <Panel header="This is panel header 3" key="3">
-            <p>{text}</p>
-          </Panel>
-        </Collapse>
-      </Panel>
-      <Panel header="This is panel header 3" key="3">
-        <Collapse ghost>
-          <Panel header="This is panel header 1" key="1">
-            <p>{text}</p>
-          </Panel>
-          <Panel header="This is panel header 2" key="2">
-            <p>{text}</p>
-          </Panel>
-          <Panel header="This is panel header 3" key="3">
-            <p>{text}</p>
-          </Panel>
-        </Collapse>
+      <Panel
+        header={Object.keys(ite)}
+        key={i}
+        forceRender={true}
+        showArrow={isArray(objectKeys(ite))}
+      >
+        {isArray(objectKeys(ite)) && mapMenu(objectKeys(ite))}
       </Panel>
     </Collapse>
-  );
+  ));
+};
+
+const SideBar = () => {
+  return mapMenu(categories);
 };
 
 export default SideBar;
