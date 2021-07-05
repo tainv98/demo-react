@@ -7,12 +7,13 @@ const { Search } = Input;
 const { Header, Content, Sider, Footer } = Layout;
 
 const MainLayout = ({
+  data,
   children,
   onChangeSortPrice,
   onChangeSearch,
   onChangeCategories,
   onChangePagination,
-  total,
+  totalProducts,
 }) => {
   return (
     <Layout>
@@ -32,10 +33,13 @@ const MainLayout = ({
       </Header>
       <Layout>
         <Sider width={280} className="site-layout-background sider">
-          <SideBar />
+          <SideBar data={data} onChangeCategories={onChangeCategories} />
         </Sider>
         <Layout className="content-products">
-          <HeaderPage onChangeSortPrice={onChangeSortPrice} total={total} />
+          <HeaderPage
+            onChangeSortPrice={onChangeSortPrice}
+            totalProducts={totalProducts}
+          />
           <Content className="site-layout-background">{children}</Content>
           <Footer style={{ textAlign: "center" }}>
             <Pagination
@@ -43,7 +47,7 @@ const MainLayout = ({
               pageSizeOptions={["12", "24", "36"]}
               defaultPageSize={12}
               onChange={(page, pageSize) => onChangePagination(page, pageSize)}
-              total={total}
+              total={totalProducts}
             />
           </Footer>
         </Layout>

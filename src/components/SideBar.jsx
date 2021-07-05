@@ -2,43 +2,23 @@ import React from "react";
 import { Collapse } from "antd";
 const { Panel } = Collapse;
 
-const b = ["tu lanh", "toshiba"];
-const c = ["tu lanh", "samsung"];
-
-const categories = [
-  {
-    "Tủ lạnh": [
-      {
-        "To lam": [
-          {
-            "Tủ nóng": "Sieu to",
-          },
-        ],
-      },
-    ],
-  },
-];
-
-const isArray = (item) => Array.isArray(item || objectKeys(item));
-const objectKeys = (item) => item[Object.keys(item)];
-
-const mapMenu = (item) => {
-  return item.map((ite, i) => (
-    <Collapse ghost>
-      <Panel
-        header={Object.keys(ite)}
-        key={i}
-        forceRender={true}
-        showArrow={isArray(objectKeys(ite))}
-      >
-        {isArray(objectKeys(ite)) && mapMenu(objectKeys(ite))}
+const mapMenu = (categories, onChangeCategories) => {
+  console.log(categories);
+  return categories.map((item, i) => (
+    <Collapse
+      ghost
+      key={i}
+      onChange={() => onChangeCategories(item.name, item.level)}
+    >
+      {console.log(item)}
+      <Panel header={item.name} key={i} forceRender={true}>
+        {item.children && mapMenu(item.children)}
       </Panel>
     </Collapse>
   ));
 };
-
-const SideBar = () => {
-  return mapMenu(categories);
+const SideBar = ({ data, onChangeCategories }) => {
+  return mapMenu(data, onChangeCategories);
 };
 
 export default SideBar;

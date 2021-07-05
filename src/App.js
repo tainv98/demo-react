@@ -3,82 +3,89 @@ import MainLayout from "./components/layout.jsx";
 import Product from "./components/Product.jsx";
 import productApi from "./api/productApi.js";
 import { Row, Col, Spin } from "antd";
+import {
+  getCategories,
+  getCategoriesLv1,
+  getCategoriesLv2,
+} from "./utils/index.js";
+
 const App = () => {
-  // const d = [a,b]
-  // const b = ["tu lanh", "toshiba"];
-  // const c = ["tu lanh", "samsung"];
-  // b.map(x => (
-  //   {b: x}
-  // ))
-  // const a = {
-  //   tulanh : {
-  //     tosiba: {
-       
-  //     },
-  //     samsung: {
-       
-  //     }
-  //   }
-  // }
-  
-  const [products, setProducts] = useState([]);
+  const [productInPage, setProductInPage] = useState([]);
   const [filter, setFilter] = useState({ _page: 1, _limit: 12 });
-  const [totalProduct, setTotalProduct] = useState(0);
-  // const [categories, setCategories] = useState([]);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [allProducts, setAllProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+
   useEffect(() => {
     const fetchProductList = async () => {
       try {
-        const {_page, _limit,...filterd} = filter;
-        const res = await productApi.getAll(filter);
-        const data = await productApi.getAll(filterd);
-        if(data) {
-          // setCategories(data.)
-          setTotalProduct(data.length)
+        const { _page, _limit, ...filterd } = filter;
+        const productsPage = await productApi.getAll(filter);
+        const products = await productApi.getAll(filterd);
+        if (products) {
+          setAllProducts(products);
+          setTotalProducts(products.length);
+          !filter.q && setCategories(getCategories(products).categories);
         }
-        setProducts(res);
+        setProductInPage(productsPage);
       } catch (error) {
-        console.log("Failed to fetch product list: ", error);
+        console.log(error);
       }
     };
     fetchProductList();
   }, [filter]);
 
+  useEffect(() => {}, []);
   const handleChangeSortPrice = (value) => {
-    if(value === "featured") {
-      const {_sort, _order,...filterd} = filter;
-      setFilter({...filterd,_page: 1});
+    if (value === "featured") {
+      const { _sort, _order, ...filterd } = filter;
+      setFilter({ ...filterd, _page: 1 });
     } else {
-      setFilter({...filter, _sort: 'price',_order: value,_page: 1})
+      setFilter({ ...filter, _sort: "price", _order: value, _page: 1 });
     }
-  }
+  };
 
   const handleChangeSearch = (value) => {
-    setFilter({...filter, name_like: value})
-  }
+    setFilter({ ...filter, name_like: value });
+  };
 
-  const handleChangeCategories = () => {
-    setFilter({})
-  }
+  const handleChangeCategories = (categoryName, categoryLevel) => {
+    if (categoryLevel === 0) {
+      setCategories(
+        getCategoriesLv1(allProducts, categories, categoryName).categories
+      );
+    }
+    if (categoryLevel === 1) {
+      setCategories(
+        getCategoriesLv2(allProducts, categories, categoryName).categories
+      );
+    }
+    setFilter({ ...filter, q: categoryName });
+  };
 
   const handleChangePagination = (page, pageSize) => {
-    setFilter({...filter, _page: page, _limit: pageSize})
-  }
+    setFilter({ ...filter, _page: page, _limit: pageSize });
+  };
 
   return (
     <MainLayout
+      data={categories}
       onChangeSortPrice={handleChangeSortPrice}
       onChangeSearch={handleChangeSearch}
       onChangeCategories={handleChangeCategories}
       onChangePagination={handleChangePagination}
-      total={totalProduct}
-      >
-      <Row gutter={[16, 16]} className="content-spin">
-        {products.length ?
-          products.map((item) => (
+      totalProducts={totalProducts}
+    >
+      <Row gutter={[16, 16]} type="flex">
+        {productInPage.length ? (
+          productInPage.map((item) => (
             <Col xl={6} lg={8} md={12} xs={24} key={item.objectID}>
-              <Product  product={item} />
+              <Product product={item} />
             </Col>
-          )) : <Spin size="large" style={{ margin: "20vh auto"}}/>}
+          ))
+        ) : (
+          <Spin size="large" style={{ margin: "20vh auto" }} />
+        )}
       </Row>
     </MainLayout>
   );

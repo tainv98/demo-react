@@ -2,7 +2,7 @@ import React from "react";
 import { Row, Col, Select } from "antd";
 const { Option } = Select;
 
-const HeaderPage = ({ onChangeSortPrice, total }) => {
+const HeaderPage = ({ onChangeSortPrice, totalProducts }) => {
   const loadTime =
     window.performance.timing.domComplete -
     window.performance.timing.domLoading;
@@ -10,7 +10,7 @@ const HeaderPage = ({ onChangeSortPrice, total }) => {
     <Row justify="space-between" style={{ padding: "15px 0" }}>
       <Col span={6}>
         <span>
-          {total} results found in {loadTime < 0 ? 0 : loadTime}
+          {totalProducts} results found in {loadTime < 0 ? 0 : loadTime}
           ms
         </span>
       </Col>

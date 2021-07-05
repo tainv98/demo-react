@@ -25,6 +25,7 @@ const Product = ({ product }) => {
         <Meta
           title={product.name}
           description={Description(product.rating, product.price)}
+          style={{ minHeight: 100 }}
         />
       </Card>
     </>
