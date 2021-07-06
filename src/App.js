@@ -3,30 +3,25 @@ import MainLayout from "./components/layout.jsx";
 import Product from "./components/Product.jsx";
 import productApi from "./api/productApi.js";
 import { Row, Col, Spin } from "antd";
-import {
-  getCategories,
-  getCategoriesLv1,
-  getCategoriesLv2,
-} from "./utils/index.js";
+import { getCategoriesLv1 } from "./utils/index.js";
 
 const App = () => {
   const [productInPage, setProductInPage] = useState([]);
   const [filter, setFilter] = useState({ _page: 1, _limit: 12 });
   const [totalProducts, setTotalProducts] = useState(0);
-  const [allProducts, setAllProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-
+  console.log(categories, "categories");
+  const [currentCate, setCurrentCate] = useState({});
   useEffect(() => {
     const fetchProductList = async () => {
       try {
         const { _page, _limit, ...filterd } = filter;
         const productsPage = await productApi.getAll(filter);
         const products = await productApi.getAll(filterd);
-        if (products) {
-          setAllProducts(products);
-          setTotalProducts(products.length);
-          !filter.q && setCategories(getCategories(products).categories);
-        }
+        setTotalProducts(products.length);
+        setCategories(
+          getCategoriesLv1(products, categories, currentCate).categories
+        );
         setProductInPage(productsPage);
       } catch (error) {
         console.log(error);
@@ -35,7 +30,6 @@ const App = () => {
     fetchProductList();
   }, [filter]);
 
-  useEffect(() => {}, []);
   const handleChangeSortPrice = (value) => {
     if (value === "featured") {
       const { _sort, _order, ...filterd } = filter;
@@ -49,18 +43,14 @@ const App = () => {
     setFilter({ ...filter, name_like: value });
   };
 
-  const handleChangeCategories = (categoryName, categoryLevel) => {
-    if (categoryLevel === 0) {
-      setCategories(
-        getCategoriesLv1(allProducts, categories, categoryName).categories
-      );
+  const handleChangeCategories = (category) => {
+    if (!category.isActive) {
+      setCurrentCate(category);
+      setFilter({ ...filter, q: category.name });
+    } else {
+      const { q, ...filterd } = filter;
+      setFilter({ ...filterd });
     }
-    if (categoryLevel === 1) {
-      setCategories(
-        getCategoriesLv2(allProducts, categories, categoryName).categories
-      );
-    }
-    setFilter({ ...filter, q: categoryName });
   };
 
   const handleChangePagination = (page, pageSize) => {

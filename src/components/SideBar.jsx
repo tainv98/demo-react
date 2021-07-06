@@ -3,16 +3,20 @@ import { Collapse } from "antd";
 const { Panel } = Collapse;
 
 const mapMenu = (categories, onChangeCategories) => {
-  console.log(categories);
   return categories.map((item, i) => (
     <Collapse
+      activeKey={item.isActive ? i : ""}
       ghost
       key={i}
-      onChange={() => onChangeCategories(item.name, item.level)}
+      onChange={() => onChangeCategories(item)}
     >
-      {console.log(item)}
-      <Panel header={item.name} key={i} forceRender={true}>
-        {item.children && mapMenu(item.children)}
+      <Panel
+        header={item.name}
+        key={i}
+        forceRender={true}
+        destroyInactivePanel={true}
+      >
+        {item.children && mapMenu(item.children, onChangeCategories)}
       </Panel>
     </Collapse>
   ));
