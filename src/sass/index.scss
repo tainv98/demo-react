@@ -28,14 +28,19 @@
   width: 100%;
 }
 .sider {
-  overflow: "auto";
+  overflow: auto;
   margin-top: 64px;
-  height: 100vh;
+  height: calc(100vh - 64px);
   position: fixed;
   left: 0;
   padding-left: 10px;
   padding-top: 10px;
   background-color: #fff;
+  &__heading {
+    font-size: 1.2em;
+    color: #888;
+    margin: 0 0 8px;
+  }
 }
 .desc {
   display: flex;
@@ -50,4 +55,7 @@
   padding: 0 24px 24px;
   margin-left: 280px;
   margin-top: 64px;
+}
+.list__item:hover { 
+  color: #1890ff;
 }

@@ -10,7 +10,6 @@ const App = () => {
   const [filter, setFilter] = useState({ _page: 1, _limit: 12 });
   const [totalProducts, setTotalProducts] = useState(0);
   const [categories, setCategories] = useState([]);
-  console.log(categories, "categories");
   const [currentCate, setCurrentCate] = useState({});
   useEffect(() => {
     const fetchProductList = async () => {
@@ -44,13 +43,8 @@ const App = () => {
   };
 
   const handleChangeCategories = (category) => {
-    if (!category.isActive) {
-      setCurrentCate(category);
-      setFilter({ ...filter, q: category.name });
-    } else {
-      const { q, ...filterd } = filter;
-      setFilter({ ...filterd });
-    }
+    setCurrentCate(category);
+    setFilter({ ...filter, q: category.name });
   };
 
   const handleChangePagination = (page, pageSize) => {

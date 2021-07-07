@@ -1,7 +1,7 @@
 export const getCategoriesLv1 = (data, oldCategories, category) => {
+  //Day la phan slice data
   const childCategories = new Set();
-  if (category.level === 0) {
-    console.log("Level 1");
+  if (category.level === 0 && !category.isActive) {
     var types = data.reduce((obj, category) => {
       const childItem = category.hierarchicalCategories.lvl1
         ?.split(">")[1]
@@ -15,8 +15,7 @@ export const getCategoriesLv1 = (data, oldCategories, category) => {
       obj[category.type]++;
       return obj;
     }, {});
-  } else if (category.level === 1) {
-    console.log("Level 2");
+  } else if (category.level === 1 && !category.isActive) {
     var types = data.reduce((obj, category) => {
       const childItem = category.hierarchicalCategories.lvl2
         ?.split(">")[2]
@@ -31,7 +30,6 @@ export const getCategoriesLv1 = (data, oldCategories, category) => {
       return obj;
     }, {});
   } else {
-    console.log("Level 0");
     var types = data.reduce((obj, category) => {
       childCategories.add(category.hierarchicalCategories.lvl0);
       if (!obj[category.type]) {
@@ -41,17 +39,17 @@ export const getCategoriesLv1 = (data, oldCategories, category) => {
       return obj;
     }, {});
   }
-
   let children = [...childCategories].slice(0, 10); //cat de lay 10 item
+  // Day la` phan merge data
   if (Object.keys(category).length === 0) {
-    // render lv0
-    oldCategories = children.map((category) => ({
-      name: category,
-      level: 0,
-      isActive: false,
-    }));
-  } else if (category.level === 0) {
-    // render lv1
+    oldCategories = children.map((category) => {
+      return {
+        name: category,
+        level: 0,
+        isActive: false,
+      };
+    });
+  } else if (category.level === 0 && children.length) {
     children = children.map((category) => {
       return {
         name: category,
@@ -62,29 +60,36 @@ export const getCategoriesLv1 = (data, oldCategories, category) => {
     const indexChange = oldCategories.findIndex(
       (cateItem) => cateItem.name === category.name // tim` index cua item dc click
     );
+
+    oldCategories = oldCategories.map((category) => {
+      delete category.children;
+      return {
+        ...category,
+        isActive: false,
+      };
+    });
+
     oldCategories[indexChange] = {
-      //gan children vao item dc click
       ...oldCategories[indexChange],
       children: children,
       isActive: true,
     };
-    // oldCategories = oldCategories.map((category) => {
-    //   delete category.children;
-    //   return {
-    //     ...category,
-    //     isActive: false,
-    //   };
-    // });
-  } else if (category.level === 1) {
-    console.log(children, "children");
+
+    if (category.isActive) {
+      oldCategories = oldCategories.map((category) => {
+        delete category.children;
+        return {
+          ...category,
+          isActive: false,
+        };
+      });
+    }
+  } else if (category.level === 1 && children.length) {
     const indexLv0 = oldCategories.findIndex((cateItem) => cateItem.children);
-    console.log(indexLv0);
     const indexLv1 = oldCategories[indexLv0].children.findIndex(
       (cateItem) => cateItem.name === category.name
     );
-    console.log(indexLv1);
     children = children.map((item) => {
-      console.log(item);
       return {
         name: item,
         level: 2,
@@ -97,17 +102,10 @@ export const getCategoriesLv1 = (data, oldCategories, category) => {
       children: children,
       isActive: true,
     };
-    console.log(
-      oldCategories[indexLv0].children[indexLv1],
-      "oldCategories[indexLv0].children[indexLv1] "
-    );
-    // children[indexChangeChild].children = children;
-    // console.log(oldCategories[indexChange], "oldCategories[indexChange]");
-    // console.log(children, "children");
-    // oldCategories[indexChange] = {
-    //   ...oldCategories[indexChange],
-    //   children: children,
-    // };
+
+    if (category.isActive) {
+      oldCategories[indexLv0].children[indexLv1].isActive = false;
+    }
   }
 
   types = Object.entries(types)
