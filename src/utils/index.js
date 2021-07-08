@@ -1,5 +1,4 @@
 export const getCategoriesLv1 = (data, oldCategories, category) => {
-  //Day la phan slice data
   const childCategories = new Set();
   if (category.level === 0 && !category.isActive) {
     var types = data.reduce((obj, category) => {
@@ -7,7 +6,7 @@ export const getCategoriesLv1 = (data, oldCategories, category) => {
         ?.split(">")[1]
         .trim();
       if (childItem) {
-        childCategories.add(childItem); // lay duoc name category lv1 add vao childCategories
+        childCategories.add(childItem);
       }
       if (!obj[category.type]) {
         obj[category.type] = 0;
@@ -39,8 +38,8 @@ export const getCategoriesLv1 = (data, oldCategories, category) => {
       return obj;
     }, {});
   }
-  let children = [...childCategories].slice(0, 10); //cat de lay 10 item
-  // Day la` phan merge data
+  let children = [...childCategories].slice(0, 10);
+
   if (Object.keys(category).length === 0) {
     oldCategories = children.map((category) => {
       return {
@@ -126,5 +125,39 @@ export const getCategoriesLv1 = (data, oldCategories, category) => {
     .map(([key, value]) => {
       return { type: key, quantity: value, checked: false };
     });
+
   return { categories: oldCategories, types, brands };
+};
+const totalRating = (arr) =>
+  arr.reduce((t, v) => ((t[v] = (t[v] || 0) + 1), t), {});
+
+const uniqueAndSlice = (arr, slice = 10) =>
+  arr
+    .filter((v, i, a) => a.findIndex((t) => t.name === v.name) === i)
+    .slice(0, slice);
+
+export const handleData = (data, category) => {
+  const categories = uniqueAndSlice(
+    data.map((item) => ({
+      name: item.hierarchicalCategories.lvl0,
+      isActive: false,
+      level: 0,
+    }))
+  );
+  const types = uniqueAndSlice(
+    data.map((item) => ({ name: item.type, isChecked: false })),
+    5
+  );
+  const brands = uniqueAndSlice(
+    data.map((item) => ({ name: item.brand, isChecked: false })),
+    5
+  );
+  const ratings = totalRating(data.map((item) => item.rating));
+
+  const priceRanges = uniqueAndSlice(
+    data.map((item) => ({ name: item.price_range }))
+  ).sort((a, b) => a.name - b.name);
+  console.log(priceRanges);
+  const total = data.length;
+  return { categories, types, brands, ratings, total, priceRanges };
 };

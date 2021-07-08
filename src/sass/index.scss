@@ -33,13 +33,13 @@
   height: calc(100vh - 64px);
   position: fixed;
   left: 0;
-  padding-left: 10px;
-  padding-top: 10px;
+  padding-left: 20px;
+  padding-top: 20px;
   background-color: #fff;
   &__heading {
     font-size: 1.2em;
     color: #888;
-    margin: 0 0 8px;
+    margin: 8px 0;
   }
 }
 .desc {
@@ -55,6 +55,9 @@
   padding: 0 24px 24px;
   margin-left: 280px;
   margin-top: 64px;
+}
+.ant-input-number {
+  width: 70px
 }
 .list__item:hover { 
   color: #1890ff;

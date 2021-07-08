@@ -7,12 +7,17 @@ const { Search } = Input;
 const { Header, Content, Sider, Footer } = Layout;
 
 const MainLayout = ({
-  data,
+  categories,
+  types,
+  brands,
+  priceRanges,
+  ratings,
   children,
   onChangeSortPrice,
   onChangeSearch,
   onChangeCategories,
   onChangePagination,
+  onChangeType,
   totalProducts,
 }) => {
   return (
@@ -33,7 +38,15 @@ const MainLayout = ({
       </Header>
       <Layout>
         <Sider width={280} className="site-layout-background sider">
-          <SideBar data={data} onChangeCategories={onChangeCategories} />
+          <SideBar
+            categories={categories}
+            types={types}
+            priceRanges={priceRanges}
+            ratings={ratings}
+            brands={brands}
+            onChangeType={onChangeType}
+            onChangeCategories={onChangeCategories}
+          />
         </Sider>
         <Layout className="content-products">
           <HeaderPage
